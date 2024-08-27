@@ -6,6 +6,7 @@ import {
   notAcceptedMove,
   snakeStartBlocks,
 } from "./data";
+import AppleImage from "./images/apple-img.png";
 
 function SnakeBody({ id, head }) {
   return (
@@ -20,17 +21,15 @@ function SnakeBody({ id, head }) {
 function Apple() {
   return (
     <span
-      className={`w-[60%] h-[60%] rounded-full absolute inline-block bg-green-600 z-10`}
+      className={`w-[60%] h-[60%] rounded-full absolute inline-block bg-green-400 z-10`}
     ></span>
   );
 }
 
-function Game() {
+export default function Game({ gameStatus, setGameStatus, setEatenAppleNum }) {
   const [snake, setSnake] = useState(snakeStartBlocks);
-  const [gameStatus, setGameStatus] = useState("playing");
   const [arrowDir, setArrowDir] = useState("ArrowRight");
   const [appleBlockNum, setAppleBlockNum] = useState(firstAppleBlockNum);
-  const [eatenAppleNum, setEatenAppleNum] = useState(0);
   const [legalSnakeLength, setLegalSnakeLength] = useState(
     Array.from(snake).length
   );
@@ -39,6 +38,7 @@ function Game() {
 
   useEffect(() => {
     if (gameStatus === "paused") return;
+    // document.querySelector(".gameGround").click();
     intervalRef.current = setInterval(() => {
       handleMoveSnake(arrowDir);
     }, 200);
@@ -127,17 +127,10 @@ function Game() {
   function handlePauseGame() {
     setGameStatus("paused");
     setAppleBlockNum(firstAppleBlockNum);
+    setSnake(snakeStartBlocks);
+    setArrowDir("ArrowRight");
+    setLegalSnakeLength(Array.from(snake).length);
     clearInterval(intervalRef.current);
-  }
-
-  function handlePlayGame(e, status = "newGame") {
-    if (status === "newGame") {
-      setGameStatus("playing");
-      setSnake(snakeStartBlocks);
-      setArrowDir("ArrowRight");
-      setEatenAppleNum(0);
-      setLegalSnakeLength(Array.from(snake).length);
-    }
   }
 
   function putAppleInGround() {
@@ -164,77 +157,25 @@ function Game() {
         if (!acceptedKey.has(e.code)) return;
         setArrowDir(e.code);
       }}
-      className="w-full flex items-center justify-center h-[100vh] bg-black"
+      className="w-full h-[700px] flex justify-center items-center"
     >
-      {gameStatus === "playing" ? (
-        <div className="w-[700px] h-[500px] bg-white flex flex-wrap justify-evenly items-center">
-          {blocks.map((item, i) => {
-            return (
-              <button
-                key={i}
-                className="w-[5%] aspect-square bg-gray-400 relative flex items-center justify-center"
-              >
-                <span className="absolute top-0 right-0 text-[16px]">
-                  {item.id}
-                </span>
-                {snake.has(item.id) && (
-                  <SnakeBody id={item.id} head={currentSnakeArr[0]} />
-                )}
-                {appleBlockNum === item.id && <Apple />}
-              </button>
-            );
-          })}
-        </div>
-      ) : (
-        <>
-          <div className="text-white">you looosed</div>
-          <button className="bg-white" onClick={handlePlayGame}>
-            play again
-          </button>
-        </>
-      )}
-    </div>
-  );
-}
-
-function SorryMessage() {
-  return (
-    <div>
-      <h1 className="text-[32px] uppercase text-center font-jersey text-white">
-        sorry your device can't support this game
-      </h1>
-      <p className="text-center capitalize font-jersey text-[#fffffff6] mt-[20px]">
-        Please comeback with other device and you can play this game easily
-      </p>
-    </div>
-  );
-}
-
-function PlayGame() {
-  return (
-    <div className="h-full flex justify-between items-center p-[30px]">
-      <div className="w-[40%] h-full bg-black">
-        <button></button>
-        <button></button>
-        <button></button>
-      </div>
-      <div className="w-[40%] h-full bg-blue-500">
-        <div></div>
-        <div></div>
-      </div>
-    </div>
-  );
-}
-
-export default function LandingPage() {
-  const userAgent = window.navigator.userAgent;
-  const isDeviceMobile = userAgent.includes("Mobile");
-
-  return (
-    <div className="w-[100vw] h-[100vh] overflow-hidden relative flex justify-center items-center">
-      <div className="w-[100vw] h-[100vh] absolute top-0 bg-snakeImg z-10"></div>
-      <div className="w-[90%] h-[50%] max-w-[800px] bg-[#ffffff76] rounded-[30px] z-20 p-[20px]">
-        {isDeviceMobile ? <SorryMessage /> : <PlayGame />}
+      <div className="w-[700px] bg-white flex flex-wrap justify-evenly items-center">
+        {blocks.map((item, i) => {
+          return (
+            <button
+              autoFocus
+              key={i}
+              className={`w-[5%] aspect-square relative flex items-center focus-visible:outline-none justify-center ${
+                item.color === "dark" ? "bg-[#302952]" : "bg-[#932554]"
+              }`}
+            >
+              {snake.has(item.id) && (
+                <SnakeBody id={item.id} head={currentSnakeArr[0]} />
+              )}
+              {appleBlockNum === item.id && <Apple />}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

@@ -28,4 +28,16 @@
     font-family: "jersey", "Franklin Gothic Medium", "Arial Narrow", Arial,
       sans-serif;
   }
+
+  .linear-btn {
+    @apply w-full py-2 uppercase text-white text-[27px] font-jersey rounded-full;
+    background-image: linear-gradient(
+      to top right,
+      #9f0abc,
+      #0076f7,
+      #009fe6,
+      #00b8b7,
+      #87c89c
+    );
+  }
 }
