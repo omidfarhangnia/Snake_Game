@@ -12,7 +12,7 @@ function SnakeBody({ id, head }) {
     <span
       className={`w-[60%] h-[60%] ${
         head === id ? "bg-black" : "bg-red-400"
-      }  rounded-full inline-block snakeBody${id} z-10`}
+      }  rounded-full inline-block snakeBody${id} z-20`}
     ></span>
   );
 }
@@ -20,16 +20,20 @@ function SnakeBody({ id, head }) {
 function Apple() {
   return (
     <span
-      className={`w-[60%] h-[60%] rounded-full inline-block bg-green-600 z-10`}
+      className={`w-[60%] h-[60%] rounded-full absolute inline-block bg-green-600 z-10`}
     ></span>
   );
 }
 
-export default function Game() {
+function Game() {
   const [snake, setSnake] = useState(snakeStartBlocks);
   const [gameStatus, setGameStatus] = useState("playing");
   const [arrowDir, setArrowDir] = useState("ArrowRight");
   const [appleBlockNum, setAppleBlockNum] = useState(firstAppleBlockNum);
+  const [eatenAppleNum, setEatenAppleNum] = useState(0);
+  const [legalSnakeLength, setLegalSnakeLength] = useState(
+    Array.from(snake).length
+  );
   const intervalRef = useRef(null);
   let currentSnakeArr = Array.from(snake);
 
@@ -84,7 +88,7 @@ export default function Game() {
 
     checkGameStatus(currentSnakeArr, arrowDir);
 
-    if (checkIsAppleOk()) {
+    if (checkIsAppleEaten()) {
       newArr.push(popedNumber);
     }
 
@@ -114,6 +118,10 @@ export default function Game() {
     ) {
       handlePauseGame();
     }
+
+    if (legalSnakeLength !== Array.from(snake).length) {
+      handlePauseGame();
+    }
   }
 
   function handlePauseGame() {
@@ -123,11 +131,12 @@ export default function Game() {
   }
 
   function handlePlayGame(e, status = "newGame") {
-    console.log(status);
     if (status === "newGame") {
       setGameStatus("playing");
       setSnake(snakeStartBlocks);
       setArrowDir("ArrowRight");
+      setEatenAppleNum(0);
+      setLegalSnakeLength(Array.from(snake).length);
     }
   }
 
@@ -137,9 +146,11 @@ export default function Game() {
     setAppleBlockNum(randomBlock);
   }
 
-  function checkIsAppleOk() {
+  function checkIsAppleEaten() {
     if (snake.has(appleBlockNum)) {
       setAppleBlockNum(null);
+      setEatenAppleNum((x) => x + 1);
+      setLegalSnakeLength((x) => x + 1);
       return true;
     } else {
       return false;
@@ -182,6 +193,49 @@ export default function Game() {
           </button>
         </>
       )}
+    </div>
+  );
+}
+
+function SorryMessage() {
+  return (
+    <div>
+      <h1 className="text-[32px] uppercase text-center font-jersey text-white">
+        sorry your device can't support this game
+      </h1>
+      <p className="text-center capitalize font-jersey text-[#fffffff6] mt-[20px]">
+        Please comeback with other device and you can play this game easily
+      </p>
+    </div>
+  );
+}
+
+function PlayGame() {
+  return (
+    <div className="h-full flex justify-between items-center p-[30px]">
+      <div className="w-[40%] h-full bg-black">
+        <button></button>
+        <button></button>
+        <button></button>
+      </div>
+      <div className="w-[40%] h-full bg-blue-500">
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  const userAgent = window.navigator.userAgent;
+  const isDeviceMobile = userAgent.includes("Mobile");
+
+  return (
+    <div className="w-[100vw] h-[100vh] overflow-hidden relative flex justify-center items-center">
+      <div className="w-[100vw] h-[100vh] absolute top-0 bg-snakeImg z-10"></div>
+      <div className="w-[90%] h-[50%] max-w-[800px] bg-[#ffffff76] rounded-[30px] z-20 p-[20px]">
+        {isDeviceMobile ? <SorryMessage /> : <PlayGame />}
+      </div>
     </div>
   );
 }
