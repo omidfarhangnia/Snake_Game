@@ -7,22 +7,72 @@ import {
   snakeStartBlocks,
 } from "./data";
 import AppleImage from "./images/apple-img.png";
+import SnakeHeadImg from "./images/snake-head.png";
 
-function SnakeBody({ id, head }) {
+function SnakeHead({ arrowDir }) {
+  const snakeHeadDir = useRef(null);
+  switch (arrowDir) {
+    case "ArrowRight": {
+      snakeHeadDir.current = "0";
+      break;
+    }
+    case "ArrowUp": {
+      snakeHeadDir.current = "-90deg";
+      break;
+    }
+    case "ArrowDown": {
+      snakeHeadDir.current = "90deg";
+      break;
+    }
+    case "ArrowLeft": {
+      snakeHeadDir.current = "180deg";
+      break;
+    }
+    default:
+  }
+
+  return (
+    <img
+      className={`scale-[1.2]`}
+      style={{ rotate: snakeHeadDir.current }}
+      src={SnakeHeadImg}
+      alt="this is snake head"
+    />
+  );
+}
+
+function SnakeBody({ id, head, arrowDir, snakeArr }) {
+  const elementIndex = snakeArr.indexOf(id) + 1;
+  // i find this number with testing
+  const bodyPartScale = 1.3 - (1 / (snakeArr.length + 7)) * elementIndex;
+
   return (
     <span
-      className={`w-[60%] h-[60%] ${
-        head === id ? "bg-black" : "bg-red-400"
-      }  rounded-full inline-block snakeBody${id} z-20`}
-    ></span>
+      className={`w-[100%] h-[100%] rounded-full inline-flex justify-center items-center snakeBody${id} z-20`}
+    >
+      {head === id ? (
+        <SnakeHead arrowDir={arrowDir} />
+      ) : (
+        <span
+          className={`w-[70%] h-[70%] rounded-full bg-[#A1C432] bg-green inline-block`}
+          style={{ scale: String(bodyPartScale > 0.2 ? bodyPartScale : 0.2) }}
+        ></span>
+      )}
+    </span>
   );
 }
 
 function Apple() {
   return (
     <span
-      className={`w-[60%] h-[60%] rounded-full absolute inline-block bg-green-400 z-10`}
-    ></span>
+      className={`w-[100%] h-[100%] rounded-full absolute inline-block z-10`}
+    >
+      <img
+        className="w-full filter-apple"
+        src={AppleImage}
+        alt="this is apple"
+      />
+    </span>
   );
 }
 
@@ -38,7 +88,6 @@ export default function Game({ gameStatus, setGameStatus, setEatenAppleNum }) {
 
   useEffect(() => {
     if (gameStatus === "paused") return;
-    // document.querySelector(".gameGround").click();
     intervalRef.current = setInterval(() => {
       handleMoveSnake(arrowDir);
     }, 200);
@@ -170,7 +219,12 @@ export default function Game({ gameStatus, setGameStatus, setEatenAppleNum }) {
               }`}
             >
               {snake.has(item.id) && (
-                <SnakeBody id={item.id} head={currentSnakeArr[0]} />
+                <SnakeBody
+                  id={item.id}
+                  snakeArr={currentSnakeArr}
+                  head={currentSnakeArr[0]}
+                  arrowDir={arrowDir}
+                />
               )}
               {appleBlockNum === item.id && <Apple />}
             </button>

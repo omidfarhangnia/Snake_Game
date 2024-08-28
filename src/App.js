@@ -59,8 +59,8 @@ function GameSetting({ eatenAppleNum, handlePlayGame }) {
 }
 
 export default function LandingPage() {
-  // const [gameStatus, setGameStatus] = useState("playing");
-  const [gameStatus, setGameStatus] = useState("paused");
+  const [gameStatus, setGameStatus] = useState("playing");
+  // const [gameStatus, setGameStatus] = useState("paused");
   const [eatenAppleNum, setEatenAppleNum] = useState(0);
   const userAgent = window.navigator.userAgent;
   const isDeviceMobile = userAgent.includes("Mobile");
