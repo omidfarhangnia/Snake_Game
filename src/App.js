@@ -1,7 +1,7 @@
 import ScoreImage from "./images/score-img.png";
 import AppleImage from "./images/apple-img.png";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Game from "./Game";
 
 function SorryMessage() {
@@ -17,9 +17,7 @@ function SorryMessage() {
   );
 }
 
-function GameSetting({ eatenAppleNum, handlePlayGame }) {
-  const [bestScore, setBestScore] = useState(0);
-
+function GameSetting({ bestScore, eatenAppleNum, handlePlayGame }) {
   return (
     <div className="h-[400px] flex justify-between items-center p-[30px] select-none">
       <div className="w-[40%] h-full flex flex-col justify-evenly items-center border-solid border-[5px] border-black bg-[#000000bf] rounded-[30px] p-[30px]">
@@ -46,11 +44,8 @@ function GameSetting({ eatenAppleNum, handlePlayGame }) {
             src={AppleImage}
             alt="this is for current score"
           />
-          <div
-            className="text-white text-[35px] uppercase font-jersey"
-            title={eatenAppleNum === 0 && "you haven't play yet"}
-          >
-            score : {eatenAppleNum === 0 ? "---" : eatenAppleNum}
+          <div className="text-white text-[35px] uppercase font-jersey">
+            score : {eatenAppleNum}
           </div>
         </div>
       </div>
@@ -59,15 +54,28 @@ function GameSetting({ eatenAppleNum, handlePlayGame }) {
 }
 
 export default function LandingPage() {
-  const [gameStatus, setGameStatus] = useState("playing");
-  // const [gameStatus, setGameStatus] = useState("paused");
+  // const [gameStatus, setGameStatus] = useState("playing");
+  const [gameStatus, setGameStatus] = useState("paused");
   const [eatenAppleNum, setEatenAppleNum] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
   const userAgent = window.navigator.userAgent;
   const isDeviceMobile = userAgent.includes("Mobile");
+
+  useEffect(() => {
+    setBestScore(localStorage.getItem("bestScore"));
+  }, []);
 
   function handlePlayGame() {
     setGameStatus("playing");
     setEatenAppleNum(0);
+  }
+
+  function handleSaveNewScore() {
+    const theCurrentBestValue = localStorage.getItem("bestScore");
+    if (eatenAppleNum > Number(theCurrentBestValue)) {
+      localStorage.setItem("bestScore", String(eatenAppleNum));
+      setBestScore(eatenAppleNum);
+    }
   }
 
   return (
@@ -81,11 +89,13 @@ export default function LandingPage() {
             {gameStatus === "playing" ? (
               <Game
                 gameStatus={gameStatus}
+                handleSaveNewScore={handleSaveNewScore}
                 setGameStatus={setGameStatus}
                 setEatenAppleNum={setEatenAppleNum}
               />
             ) : (
               <GameSetting
+                bestScore={bestScore}
                 eatenAppleNum={eatenAppleNum}
                 handlePlayGame={handlePlayGame}
               />

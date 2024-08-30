@@ -76,7 +76,12 @@ function Apple() {
   );
 }
 
-export default function Game({ gameStatus, setGameStatus, setEatenAppleNum }) {
+export default function Game({
+  gameStatus,
+  handleSaveNewScore,
+  setGameStatus,
+  setEatenAppleNum,
+}) {
   const [snake, setSnake] = useState(snakeStartBlocks);
   const [arrowDir, setArrowDir] = useState("ArrowRight");
   const [appleBlockNum, setAppleBlockNum] = useState(firstAppleBlockNum);
@@ -174,6 +179,7 @@ export default function Game({ gameStatus, setGameStatus, setEatenAppleNum }) {
   }
 
   function handlePauseGame() {
+    handleSaveNewScore();
     setGameStatus("paused");
     setAppleBlockNum(firstAppleBlockNum);
     setSnake(snakeStartBlocks);
