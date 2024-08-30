@@ -41,7 +41,24 @@
     );
   }
 
-  .filter-apple{
+  .filter-apple {
     filter: hue-rotate(106deg);
+  }
+
+  .range-input-style {
+    -webkit-appearance: none;
+    appearance: none;
+    background: black;
+    border-radius: 30px;
+    border: 2px solid white;
+  }
+
+  .range-input-style::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
   }
 }
