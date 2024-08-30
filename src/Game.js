@@ -78,6 +78,7 @@ function Apple() {
 
 export default function Game({
   gameStatus,
+  diffValue,
   handleSaveNewScore,
   setGameStatus,
   setEatenAppleNum,
@@ -93,9 +94,10 @@ export default function Game({
 
   useEffect(() => {
     if (gameStatus === "paused") return;
+    const intervalTime = giveIntervalTime();
     intervalRef.current = setInterval(() => {
       handleMoveSnake(arrowDir);
-    }, 200);
+    }, intervalTime);
     if (appleBlockNum === null) {
       putAppleInGround();
     }
@@ -104,6 +106,18 @@ export default function Game({
       clearInterval(intervalRef.current);
     };
   }, [arrowDir, snake, gameStatus]);
+
+  function giveIntervalTime() {
+    let time = 3000;
+    if(diffValue === 0) {
+      time = 400;
+    }else if (diffValue === 1) {
+      time = 200;
+    }else {
+      time = 100;
+    }
+    return time;
+  }
 
   function handleMoveSnake(arrowDir) {
     let newArr = Array.from(snake);
